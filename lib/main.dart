@@ -1,5 +1,6 @@
 import 'package:datn/providers/app_state.dart';
 import 'package:datn/screens/home_screen.dart';
+import 'package:datn/screens/splash/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,13 +29,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DATN',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: HomeScreen.id,
+      initialRoute: SplashScreen.id,
       routes: {
+        SplashScreen.id: (_) => const SplashScreen(),
         HomeScreen.id: (_) => const HomeScreen()
       },
+      
     );
   }
 }
