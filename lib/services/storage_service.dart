@@ -14,4 +14,20 @@ class StorageService {
     }
     return list;
   }
+
+  static Future<List<Map<String,dynamic>>> getPlaceType() async {
+    List<Map<String,dynamic>> list = [];
+    final datas = await _instance.collection(baseDoccumentStorage).doc(placeTypeDoccumentName).collection("data").get();
+    for(var data in datas.docs) {
+      if(data.exists) {
+        Map<String,dynamic> placeType = {
+          "id" : int.tryParse(data.id)
+        };
+        placeType.addAll(data.data());
+        list.add(placeType);
+      }
+    }
+    print(list);
+    return list;
+  }
 }

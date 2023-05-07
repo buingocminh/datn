@@ -10,7 +10,8 @@ import '../../providers/app_state.dart';
 import '../../services/file_service.dart';
 
 class MapWidget extends StatefulWidget {
-  const MapWidget({super.key});
+  const MapWidget({super.key, required this.listPlace});
+  final List<PlaceModel> listPlace;
 
   @override
   State<MapWidget> createState() => _MapWidgetState();
@@ -19,10 +20,11 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
 
   GoogleMapController? _controller;
-  Set<Marker> _markerList = {};
+  final Set<Marker> _markerList = {};
 
   void _onMapCreate(GoogleMapController controller) {
     _controller = controller;
+    context.read<AppState>().mapController = controller;
     FileService.getJsonContent("assets/googlemap_config.json").then((value) {
       controller.setMapStyle(value);
     });
@@ -30,8 +32,8 @@ class _MapWidgetState extends State<MapWidget> {
   }
 
   Future initLocationData() async {
-    List<PlaceModel> list = await StorageService.getPlaceData();
-    for(var place in list) {
+    _markerList.clear();
+    for(var place in widget.listPlace) {
       await _markerList.addLabelMarker(
         LabelMarker(
         label: place.name,
@@ -49,6 +51,21 @@ class _MapWidgetState extends State<MapWidget> {
 
     }
     setState(() {});
+  }
+
+  @override
+  void didUpdateWidget(covariant MapWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      initLocationData();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    context.read<AppState>().mapController = null;
+    _controller?.dispose();
   }
 
   @override
