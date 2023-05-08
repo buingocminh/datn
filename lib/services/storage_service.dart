@@ -30,4 +30,18 @@ class StorageService {
     print(list);
     return list;
   }
+
+  static Future<List<PlaceModel>> getPlaceDataByType(int type) async {
+    List<PlaceModel> list = [];
+    final datas = await _instance.collection(baseDoccumentStorage).doc(placeDoccumentName).collection("data").where(
+      "type",
+      isEqualTo: type
+    ).get();
+    for(var data in datas.docs) {
+      list.add(PlaceModel.fromSnapShot(data));
+    }
+    Logger.log(list);
+    return list;
+  }
+  
 }

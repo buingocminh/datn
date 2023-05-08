@@ -9,7 +9,27 @@ class AppState extends ChangeNotifier {
   LatLng userLocation = const LatLng(0, 0);
   List<PlaceModel> listPlace = [];
   List<Map<String,dynamic>> listPlaceType = [];
+  int? _sortedType;
   GoogleMapController? mapController;
+
+
+  int? get sortedType => _sortedType;
+
+
+  set sortedType(int? value) {
+    _sortedType = value;
+    if(value == null) {
+      StorageService.getPlaceData().then((value) {
+        listPlace = value;
+        notifyListeners();
+      });
+    } else {
+      StorageService.getPlaceDataByType(value).then((value) {
+        listPlace = value;
+        notifyListeners();
+      });
+    }
+  }
 
   Future init() async {
     if(await LocationService.getUserPermission()) {

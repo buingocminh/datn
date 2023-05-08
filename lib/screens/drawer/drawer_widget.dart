@@ -11,7 +11,7 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
 
-  List<int> _listPlaceId = [];
+  late int? type = context.read<AppState>().sortedType;
 
   @override
   Widget build(BuildContext context) {
@@ -35,17 +35,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   tilePadding: EdgeInsets.zero,
                   children: [
                     ...context.read<AppState>().listPlaceType.map(
-                      (e) => CheckboxListTile(
+                      (e) => RadioListTile<int>(
                         controlAffinity: ListTileControlAffinity.leading,
-                        value: _listPlaceId.contains(e['id']), 
-                        selected: _listPlaceId.contains(e['id']),
+                        value: e["id"],
+                        groupValue: type, 
+                        // selected: _listPlaceId.contains(e['id']),
                         onChanged: (value) {
-                          if(value == true && !_listPlaceId.contains(e['id'])) {
-                            _listPlaceId.add(e['id']);
-                          }
-                          if(!(value ?? false)) {
-                            _listPlaceId.remove(e["id"]);
-                          }
+                          type = value;
                           setState(() {});
                         },
                         title: Text(
@@ -62,14 +58,17 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         ElevatedButton(
                           onPressed: () {
                             setState(() {
-                              _listPlaceId.clear();
+                              type = null;
                             });
                           }, 
                           child: Text("Bỏ chọn")
                         ),
                         const SizedBox(width: 10,),
                         ElevatedButton(
-                          onPressed: () {}, 
+                          onPressed: () {
+                            context.read<AppState>().sortedType = type;
+                            Navigator.of(context).pop();
+                          }, 
                           child: Text("Lưu")
                         )
                       ],
@@ -77,16 +76,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ],
                 ),
         
-                DrawerButton(
-                    const Icon(
-                      Icons.logout,
-                      size: 15,
-                      color: Colors.black,
-                    ), 
-                    "Đăng nhập", 
-                    () async {
-                    }
-                  ),
+                // DrawerButton(
+                //     const Icon(
+                //       Icons.logout,
+                //       size: 15,
+                //       color: Colors.black,
+                //     ), 
+                //     "Đăng nhập", 
+                //     () async {
+                //     }
+                //   ),
           
               ],
             ),
