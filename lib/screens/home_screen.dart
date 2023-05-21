@@ -7,6 +7,7 @@ import 'package:datn/screens/search/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,20 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             ),
              Container(
-              width:MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.fromLTRB(5, 10, 10, 10),
-              child: Row(
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  GestureDetector(
-                    onTap: () =>  _key.currentState!.openDrawer(),
-                    child: const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Icon(
-                        Icons.menu
-                      ),
-                    ),
-                  ),
-                  Expanded(
+                  ColoredBox(
+                    color: Colors.white,
                     child: Hero(
                       tag: "search",
                       child: Material(
@@ -61,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             fillColor: Colors.grey,
                             prefixIcon: Icon(
                               Icons.search,
-                              // color: Colors.white,
                             ),
                             hintText: "Nhập địa điểm cần tìm",
                             border: OutlineInputBorder(),
@@ -78,6 +70,45 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    child: Selector<AppState,Tuple2<int?, List<Map<String,dynamic>>>>(
+                      selector: (ctx,state) => Tuple2(state.sortedType, state.listPlaceType),
+                      builder: (ctx, value, _) {
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          itemCount:  value.item2.length,
+                          scrollDirection: Axis.horizontal,
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(width: 10,);
+                          },
+                          itemBuilder: (ctx, index) {
+                            return ChoiceChip(
+                              label: Text(
+                                value.item2[index]['name'],
+                                style: const TextStyle(
+                                  color: Colors.black
+                                ),
+                              ), 
+                              selected: value.item1 == value.item2[index]["id"],
+                              disabledColor: Colors.white,
+                              backgroundColor: Colors.white,
+                              selectedColor: Colors.blue.shade100,
+                              onSelected: (val) {
+                                if(val) {
+                                  ctx.read<AppState>().sortedType = value.item2[index]["id"];
+                                } else {
+                                  ctx.read<AppState>().sortedType = null;
+                                }
+                              },
+                            );
+                            // return Text(value[index]['name']);
+                          },
+                        );
+                      }
+                    ),
+                  )
                 ],
               ),
             ),

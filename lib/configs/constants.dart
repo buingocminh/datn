@@ -4,3 +4,4 @@ const String placeTypeDoccumentName = "Place_type";
 const String userDoccumentName = "User";
 const double defaultMapZoom = 16;
 const String boxUserSettingName = "box_user_setting_name";
+const String goongApikey = 'fjHl2Ddo2kzRei2PLm2Oi8fjAU61UfzMbdDhCSaI';
