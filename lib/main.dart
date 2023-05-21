@@ -1,5 +1,6 @@
 import 'package:datn/providers/app_state.dart';
 import 'package:datn/screens/home_screen.dart';
+import 'package:datn/screens/search/search_screen.dart';
 import 'package:datn/screens/splash/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -27,18 +28,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'DATN',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      initialRoute: SplashScreen.id,
-      routes: {
-        SplashScreen.id: (_) => const SplashScreen(),
-        HomeScreen.id: (_) => const HomeScreen()
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        }
       },
-      
+      child: MaterialApp(
+        title: 'DATN',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        initialRoute: SplashScreen.id,
+        routes: {
+          SplashScreen.id: (_) => const SplashScreen(),
+          HomeScreen.id: (_) => const HomeScreen(),
+          SearchScreen.id: (_) => const SearchScreen(),
+        },
+        
+      ),
     );
   }
 }

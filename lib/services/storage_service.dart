@@ -43,5 +43,44 @@ class StorageService {
     Logger.log(list);
     return list;
   }
+
+  static Future<List<PlaceModel>> searchPlaceByKeyWord(String? key) async {
+    List<PlaceModel> list = await getPlaceData();
+    if(key == null) return [];
+    return list.where(
+      (element) => element.isContainKeyWord(key.toLowerCase())
+    ).toList();
+  }
   
+  // static Future<List<PlaceModel>> searchPlaceByKeyWord(String? key) async {
+  //   print("searching with $key");
+  //   List<PlaceModel> list = [];
+  //   final datas = await _instance.
+  //     collection(baseDoccumentStorage)
+  //       .doc(placeDoccumentName)
+  //         .collection("data")
+  //           .where("name",isGreaterThanOrEqualTo: key?.toLowerCase())
+  //           .where("name", isLessThan: (key ?? "") + z).get().then(
+  //             (nameSnapShot) async {
+  //               return await _instance.
+  //                 collection(baseDoccumentStorage)
+  //                   .doc(placeDoccumentName)
+  //                     .collection("data")
+  //                       .where("address",isGreaterThanOrEqualTo: key).get().then(
+  //                         (addressSnapShot) {
+  //                           var result =  nameSnapShot.docs;
+  //                           result.removeWhere((element) => addressSnapShot.docs.contains(element));
+  //                           result.addAll(addressSnapShot.docs);
+  //                           return result;
+  //                         }
+  //                       );
+  //             }
+  //           );
+  //   for(var data in datas) {
+  //     list.add(PlaceModel.fromSnapShot(data));
+  //   }
+    
+  //   Logger.log(list);
+  //   return list;
+  // }
 }

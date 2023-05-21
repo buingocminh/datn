@@ -19,4 +19,12 @@ class PlaceModel {
     type = data['type'] ?? ""; 
     latLong = LatLng(geoPoint.latitude, geoPoint.longitude);
   } 
+
+  operator == (Object other) {
+    return other is PlaceModel && other.id == id;
+  }
+
+  bool isContainKeyWord(String key) {
+    return name.toLowerCase().contains(key) || address.toLowerCase().contains(key);
+  }
 }

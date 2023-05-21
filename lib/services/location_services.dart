@@ -18,7 +18,14 @@ class LocationService {
   }
 
   static Future<LatLng> getUserLocation() async {
-    Position position =  await Geolocator.getCurrentPosition();
-    return LatLng(position.latitude , position.longitude);
+    try {
+      Position position =  await Geolocator.getCurrentPosition();
+      return LatLng(position.latitude , position.longitude);
+    } catch (e) {
+      // var position = await Location().getLocation();
+      return LatLng(20.92132771735378,105.85317765128764 );
+    }
+
+      // return LatLng(latitude, longitude)
   }
 }

@@ -64,7 +64,7 @@ class _MapWidgetState extends State<MapWidget> {
   @override
   void dispose() {
     super.dispose();
-    context.read<AppState>().mapController = null;
+    // context.read<AppState>().mapController = null;
     _controller?.dispose();
   }
 
