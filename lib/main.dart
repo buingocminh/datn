@@ -1,4 +1,5 @@
 import 'package:datn/providers/app_state.dart';
+import 'package:datn/screens/detail_location/detail_location_screen.dart';
 import 'package:datn/screens/home_screen.dart';
 import 'package:datn/screens/search/search_screen.dart';
 import 'package:datn/screens/splash/splash_screen.dart';
@@ -13,14 +14,10 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
   await Firebase.initializeApp();
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AppState())
-      ],
-      child: const MyApp(),
-    )
-  );
+  runApp(MultiProvider(
+    providers: [ChangeNotifierProvider(create: (_) => AppState())],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -46,8 +43,8 @@ class MyApp extends StatelessWidget {
           SplashScreen.id: (_) => const SplashScreen(),
           HomeScreen.id: (_) => const HomeScreen(),
           SearchScreen.id: (_) => const SearchScreen(),
+          DetailLocationScreen.id: (_) => const DetailLocationScreen(),
         },
-        
       ),
     );
   }
