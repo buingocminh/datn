@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datn/common/string_extension.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PlaceModel {
@@ -25,6 +26,11 @@ class PlaceModel {
   }
 
   bool isContainKeyWord(String key) {
-    return name.toLowerCase().contains(key) || address.toLowerCase().contains(key);
+    if(key.length > 1) {
+      print(key.replaceAllDiacritics);
+      return name.toLowerCase().replaceAllDiacritics.contains(key.replaceAllDiacritics) || address.toLowerCase().replaceAllDiacritics.contains(key.replaceAllDiacritics);
+    } else {
+      return name.toLowerCase().contains(key) || address.toLowerCase().contains(key);
+    }
   }
 }

@@ -1,10 +1,14 @@
+import 'dart:developer';
+
 import 'package:datn/models/place_model.dart';
 import 'package:datn/services/location_services.dart';
 import 'package:datn/services/storage_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../configs/constants.dart';
+import '../models/user_model.dart';
 
 class AppState extends ChangeNotifier {
 
@@ -14,6 +18,7 @@ class AppState extends ChangeNotifier {
   int? _sortedType;
   GoogleMapController? mapController;
   Polyline? _userDirection;
+  UserModel? user;
 
 
 
@@ -60,5 +65,32 @@ class AppState extends ChangeNotifier {
     listPlace = await StorageService.getPlaceData();
     listPlaceType = await StorageService.getPlaceType();
     notifyListeners();
+  }
+
+  Future signUpUser(Map<String,dynamic> data) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: data["email"], 
+        password: data["password"]
+      );
+      await StorageService.recordUserSignUp(data, FirebaseAuth.instance.currentUser?.uid ?? "");
+    } on FirebaseAuthException catch(e) {
+      if(e.code == "'weak-password'") {
+        throw "Mật khẩu quá ngắn";
+      }
+      if(e.code == 'email-already-in-use') {
+        throw "Tài khoản đã tồn tại";
+      }
+    }
+  }
+
+  Future signInUser(Map<String,dynamic> data) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: data["email"], password: data["password"]);
+      user = await StorageService.getUserData(FirebaseAuth.instance.currentUser?.uid ?? "");
+      inspect(user);
+    } catch(e) {
+      throw "Tài khoản hoặc mật khẩu không đúng";
+    }
   }
 }

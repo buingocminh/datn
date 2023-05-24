@@ -63,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             FocusManager.instance.primaryFocus?.unfocus();
                             final result = await Navigator.of(context).pushNamed(SearchScreen.id);
                             if(result != null && result is LatLng) {
+                                print("Here");
                                 context.read<AppState>().mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: result,zoom: defaultMapZoom)));
                             }
                           },

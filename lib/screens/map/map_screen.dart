@@ -88,7 +88,7 @@ class _MapWidgetState extends State<MapWidget> {
           },
           initialCameraPosition:  CameraPosition(
             target: context.read<AppState>().userLocation,
-            zoom: defaultMapZoom,
+            zoom: 17,
           ),
         );
       }

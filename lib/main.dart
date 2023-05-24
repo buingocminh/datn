@@ -1,11 +1,15 @@
 import 'package:datn/providers/app_state.dart';
+import 'package:datn/screens/auth/sign_in_screen.dart';
 import 'package:datn/screens/home_screen.dart';
 import 'package:datn/screens/search/search_screen.dart';
 import 'package:datn/screens/splash/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
+
+import 'screens/auth/sign_up_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,19 +39,26 @@ class MyApp extends StatelessWidget {
           FocusManager.instance.primaryFocus?.unfocus();
         }
       },
-      child: MaterialApp(
-        title: 'DATN',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+      child: GlobalLoaderOverlay(
+        overlayWidget: const Center(child: CircularProgressIndicator(),),
+        useDefaultLoading: false,
+        child: MaterialApp(
+          title: 'DATN',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          initialRoute: SplashScreen.id,
+          // initialRoute: SignInScreen.id,
+          routes: {
+            SplashScreen.id: (_) => const SplashScreen(),
+            HomeScreen.id: (_) => const HomeScreen(),
+            SearchScreen.id: (_) => const SearchScreen(),
+            SignInScreen.id: (_) => const SignInScreen(),
+            SignUpScreen.id: (_) => const SignUpScreen(),
+          },
+          
         ),
-        initialRoute: SplashScreen.id,
-        routes: {
-          SplashScreen.id: (_) => const SplashScreen(),
-          HomeScreen.id: (_) => const HomeScreen(),
-          SearchScreen.id: (_) => const SearchScreen(),
-        },
-        
       ),
     );
   }

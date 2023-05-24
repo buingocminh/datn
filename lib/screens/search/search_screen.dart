@@ -108,41 +108,44 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ],
               ),
-              Builder(
-                builder: (ctx) {
-                  if(_status == SearchBarStatus.idle) {
-                    return const SizedBox();
-                  }
-                  if(_status == SearchBarStatus.searching) return const Expanded(child: Center(child: CircularProgressIndicator(),));
-                  return ListView.builder(
-                    itemCount: _result.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          _result[index].name,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Text(
-                          _result[index].address,
-                        ),
-                        onTap: () {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          context.read<AppState>().sortedType = null;
-                          Future.delayed(Duration(milliseconds: 500), () {
-                            Navigator.of(context).pop(_result[index].latLong);
-                          });
-                        },
-                      );
-                    },
-                  );
-                },
+              Expanded(
+                child: Builder(
+                  builder: (ctx) {
+                    if(_status == SearchBarStatus.idle) {
+                      return const SizedBox();
+                    }
+                    if(_status == SearchBarStatus.searching) return const Center(child: CircularProgressIndicator(),);
+                    return ListView.builder(
+                      itemCount: _result.length,
+                      // shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(
+                            _result[index].name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Text(
+                            _result[index].address,
+                          ),
+                          onTap: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            context.read<AppState>().sortedType = null;
+                            Future.delayed(const Duration(milliseconds: 500), () {
+                              Navigator.of(context).pop(_result[index].latLong);
+                            });
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
         ),
       ),
+    
     );
   }
 }
