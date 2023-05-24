@@ -3,6 +3,8 @@ import 'package:datn/configs/constants.dart';
 import 'package:datn/models/place_model.dart';
 import 'package:datn/services/log_service.dart';
 
+import '../models/user_model.dart';
+
 class StorageService {
   static final FirebaseFirestore _instance = FirebaseFirestore.instance;
 
@@ -51,6 +53,22 @@ class StorageService {
       (element) => element.isContainKeyWord(key.toLowerCase())
     ).toList();
   }
+
+  static Future recordUserSignUp(Map<String,dynamic> data, String id) async {
+    await _instance.collection(baseDoccumentStorage).doc(userDoccumentName).collection("data").doc(id).set({
+      "id" : id,
+      "name" : data["name"],
+      "email" : data['email']
+    });
+  }
+  static Future<UserModel> getUserData(String id) async {
+    var result = await _instance.collection(baseDoccumentStorage).doc(userDoccumentName).collection("data").doc(id).get();
+    if(result.exists) {
+      var data = result.data() ?? {};
+      return UserModel(id: data["id"] ?? "", name: data['name'] ?? "", email: data["email"] ?? "");
+    }
+    throw "Tài khoản hoặc mật khẩu không đúng";
+  } 
   
   // static Future<List<PlaceModel>> searchPlaceByKeyWord(String? key) async {
   //   print("searching with $key");

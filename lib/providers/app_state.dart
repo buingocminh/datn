@@ -1,8 +1,14 @@
+import 'dart:developer';
+
 import 'package:datn/models/place_model.dart';
 import 'package:datn/services/location_services.dart';
 import 'package:datn/services/storage_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../configs/constants.dart';
+import '../models/user_model.dart';
 
 class AppState extends ChangeNotifier {
 
@@ -11,9 +17,14 @@ class AppState extends ChangeNotifier {
   List<Map<String,dynamic>> listPlaceType = [];
   int? _sortedType;
   GoogleMapController? mapController;
+  Polyline? _userDirection;
+  UserModel? user;
+
 
 
   int? get sortedType => _sortedType;
+  Polyline? get userDirection => _userDirection;
+
 
 
   set sortedType(int? value) {
@@ -31,6 +42,19 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  Future setUserDirection(LatLng place) async {
+    userLocation = await LocationService.getUserLocation();
+    var result = await LocationService.getDirection(userLocation, place);
+    _userDirection = Polyline(
+      polylineId: const PolylineId("1"), 
+      points: result, 
+      color: Colors.blue.shade300,
+      width: 5
+    );
+    mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: userLocation,zoom: defaultMapZoom)));
+    notifyListeners();
+  }
+
   Future init() async {
     
     final permisstion = await LocationService.getUserPermission();
@@ -41,5 +65,32 @@ class AppState extends ChangeNotifier {
     listPlace = await StorageService.getPlaceData();
     listPlaceType = await StorageService.getPlaceType();
     notifyListeners();
+  }
+
+  Future signUpUser(Map<String,dynamic> data) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: data["email"], 
+        password: data["password"]
+      );
+      await StorageService.recordUserSignUp(data, FirebaseAuth.instance.currentUser?.uid ?? "");
+    } on FirebaseAuthException catch(e) {
+      if(e.code == "'weak-password'") {
+        throw "Mật khẩu quá ngắn";
+      }
+      if(e.code == 'email-already-in-use') {
+        throw "Tài khoản đã tồn tại";
+      }
+    }
+  }
+
+  Future signInUser(Map<String,dynamic> data) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: data["email"], password: data["password"]);
+      user = await StorageService.getUserData(FirebaseAuth.instance.currentUser?.uid ?? "");
+      inspect(user);
+    } catch(e) {
+      throw "Tài khoản hoặc mật khẩu không đúng";
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:datn/models/place_model.dart';
+import 'package:datn/screens/place/place_info_screen.dart';
 import 'package:datn/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -45,6 +46,9 @@ class _MapWidgetState extends State<MapWidget> {
         infoWindow: InfoWindow(
           title: place.name,
           snippet: place.address,
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => PlaceInfoScreen(model: place) ));
+          },
         ) 
 
       ));
@@ -70,16 +74,24 @@ class _MapWidgetState extends State<MapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GoogleMap(
-      mapToolbarEnabled: false,
-      myLocationEnabled: true,
-      onMapCreated: _onMapCreate,
-      myLocationButtonEnabled: false,
-      markers: _markerList,
-      initialCameraPosition:  CameraPosition(
-        target: context.read<AppState>().userLocation,
-        zoom: defaultMapZoom,
-      ),
+    return Selector<AppState, Polyline?>(
+      selector: (ctx, state) => state.userDirection,
+      builder: (ctx, list, _) {
+        return GoogleMap(
+          mapToolbarEnabled: false,
+          myLocationEnabled: true,
+          onMapCreated: _onMapCreate,
+          myLocationButtonEnabled: false,
+          markers: _markerList,
+          polylines: list == null ? {} : {
+            list
+          },
+          initialCameraPosition:  CameraPosition(
+            target: context.read<AppState>().userLocation,
+            zoom: 17,
+          ),
+        );
+      }
     );
   }
 }
