@@ -10,27 +10,35 @@ class PlaceModel {
   late final LatLng latLong;
   late final String id;
 
-  PlaceModel.fromSnapShot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
-    Map<String,dynamic> data = snapshot.data();
-    GeoPoint geoPoint =  (data['latLong'] ?? const GeoPoint(0, 0)) as GeoPoint;
-    id = snapshot.id; 
-    address = data['address'] ?? ""; 
-    name = data['name'] ?? ""; 
-    previewImg = data['previewImg'] ?? ""; 
-    type = data['type'] ?? ""; 
+  PlaceModel.fromSnapShot(
+      QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
+    Map<String, dynamic> data = snapshot.data();
+    GeoPoint geoPoint = (data['latLong'] ?? const GeoPoint(0, 0)) as GeoPoint;
+    id = snapshot.id;
+    address = data['address'] ?? "";
+    name = data['name'] ?? "";
+    previewImg = data['previewImg'] ?? "";
+    type = data['type'] ?? "";
     latLong = LatLng(geoPoint.latitude, geoPoint.longitude);
-  } 
+  }
 
-  operator == (Object other) {
+  operator ==(Object other) {
     return other is PlaceModel && other.id == id;
   }
 
   bool isContainKeyWord(String key) {
-    if(key.length > 1) {
-      print(key.replaceAllDiacritics);
-      return name.toLowerCase().replaceAllDiacritics.contains(key.replaceAllDiacritics) || address.toLowerCase().replaceAllDiacritics.contains(key.replaceAllDiacritics);
+    if (key.length > 1) {
+      return name
+              .toLowerCase()
+              .replaceAllDiacritics
+              .contains(key.replaceAllDiacritics) ||
+          address
+              .toLowerCase()
+              .replaceAllDiacritics
+              .contains(key.replaceAllDiacritics);
     } else {
-      return name.toLowerCase().contains(key) || address.toLowerCase().contains(key);
+      return name.toLowerCase().contains(key) ||
+          address.toLowerCase().contains(key);
     }
   }
 }
