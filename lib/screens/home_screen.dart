@@ -37,39 +37,54 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             ),
              Container(
-              margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              margin: const EdgeInsets.fromLTRB(0, 10, 20, 10),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ColoredBox(
-                    color: Colors.white,
-                    child: Hero(
-                      tag: "search",
-                      child: Material(
-                        color: Colors.transparent,
-                        child: TextField(
-                          readOnly: true,
-                          decoration:  const InputDecoration(
-                            contentPadding: EdgeInsets.zero,
-                            fillColor: Colors.grey,
-                            prefixIcon: Icon(
-                              Icons.search,
-                            ),
-                            hintText: "Nhập địa điểm cần tìm",
-                            border: OutlineInputBorder(),
-                            enabledBorder: OutlineInputBorder(),
-                          ),
-                          onTap: () async {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            final result = await Navigator.of(context).pushNamed(SearchScreen.id);
-                            if(result != null && result is LatLng) {
-                                print("Here");
-                                context.read<AppState>().mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: result,zoom: defaultMapZoom)));
-                            }
-                          },
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () =>  _key.currentState!.openDrawer(),
+                        child: const Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Icon(
+                          Icons.menu
+                        ),
                         ),
                       ),
-                    ),
+                      Expanded(
+                        child: ColoredBox(
+                          color: Colors.white,
+                          child: Hero(
+                            tag: "search",
+                            child: Material(
+                              color: Colors.transparent,
+                              child: TextField(
+                                readOnly: true,
+                                decoration:  const InputDecoration(
+                                  contentPadding: EdgeInsets.zero,
+                                  fillColor: Colors.grey,
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                  ),
+                                  hintText: "Nhập địa điểm cần tìm",
+                                  border: OutlineInputBorder(),
+                                  enabledBorder: OutlineInputBorder(),
+                                ),
+                                onTap: () async {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  final result = await Navigator.of(context).pushNamed(SearchScreen.id);
+                                  if(result != null && result is LatLng) {
+                                      print("Here");
+                                      context.read<AppState>().mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: result,zoom: defaultMapZoom)));
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width,

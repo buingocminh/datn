@@ -1,4 +1,6 @@
+import 'package:datn/models/user_model.dart';
 import 'package:datn/providers/app_state.dart';
+import 'package:datn/screens/auth/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,74 +23,62 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10) ,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-        
-                ExpansionTile(
-                  title: const Text(
-                    "Lọc theo chủ đề",
-                    style: TextStyle(
-                      color: Colors.black
-                    ),
+          child: Selector<AppState, UserModel?>(
+            selector: (ctx, state) => state.user,
+            builder: (ctx, value, _) {
+              if(value == null) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const CircleAvatar(
+                        radius: 30,
+                      ),
+                      const Text(
+                        "Người dùng ẩn danh \n Đăng nhập để sử dụng nhiều tính năng hơn",
+                        textAlign: TextAlign.center,
+                      ),
+                      DrawerButton(
+                        const Icon(Icons.login), 
+                        "Đăng nhập", 
+                        () {
+                          Navigator.of(context).pushNamed(SignInScreen.id);
+                        }
+                      ),
+
+                    ],
                   ),
-                  tilePadding: EdgeInsets.zero,
-                  children: [
-                    ...context.read<AppState>().listPlaceType.map(
-                      (e) => RadioListTile<int>(
-                        controlAffinity: ListTileControlAffinity.leading,
-                        value: e["id"],
-                        groupValue: type, 
-                        // selected: _listPlaceId.contains(e['id']),
-                        onChanged: (value) {
-                          type = value;
-                          setState(() {});
-                        },
-                        title: Text(
-                          e['name'],
-                          style: const TextStyle(
-                            color: Colors.black
-                          ),
+                );
+              } else {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const CircleAvatar(
+                        radius: 30,
+                      ),
+                      Text(
+                        value.name,
+                        textAlign: TextAlign.center,
+                      ),
+                      DrawerButton(
+                        const Icon(Icons.logout), 
+                        "Đăng xuất", 
+                        () {
+                          context.read<AppState>().logoutUser();
+                        }
+                      ),
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Địa điểm ưa thích của bạn",
                         ),
-                      )
-                    ).toList(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              type = null;
-                            });
-                          }, 
-                          child: Text("Bỏ chọn")
-                        ),
-                        const SizedBox(width: 10,),
-                        ElevatedButton(
-                          onPressed: () {
-                            context.read<AppState>().sortedType = type;
-                            Navigator.of(context).pop();
-                          }, 
-                          child: Text("Lưu")
-                        )
-                      ],
-                    )
-                  ],
-                ),
-        
-                // DrawerButton(
-                //     const Icon(
-                //       Icons.logout,
-                //       size: 15,
-                //       color: Colors.black,
-                //     ), 
-                //     "Đăng nhập", 
-                //     () async {
-                //     }
-                //   ),
-          
-              ],
-            ),
+                      ),
+                      //TODO add logic here
+                      // Expanded()
+                    ],
+                  ),
+                );
+              }
+            }
           ),
         ),
       ),

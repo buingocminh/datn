@@ -25,6 +25,11 @@ class AppState extends ChangeNotifier {
   int? get sortedType => _sortedType;
   Polyline? get userDirection => _userDirection;
 
+  AppState() {
+    if(FirebaseAuth.instance.currentUser != null) {
+      StorageService.getUserData(FirebaseAuth.instance.currentUser?.uid ?? "").then((value) => user = value);
+    }
+  }
 
 
   set sortedType(int? value) {
@@ -91,6 +96,16 @@ class AppState extends ChangeNotifier {
       inspect(user);
     } catch(e) {
       throw "Tài khoản hoặc mật khẩu không đúng";
+    }
+  }
+
+  Future logoutUser() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      user = null;
+      notifyListeners();
+    } catch(e) {
+      throw "Không thể đăng xuất, vui lòng thử lại";
     }
   }
 }
