@@ -79,6 +79,8 @@ class AppState extends ChangeNotifier {
         password: data["password"]
       );
       await StorageService.recordUserSignUp(data, FirebaseAuth.instance.currentUser?.uid ?? "");
+      user = await StorageService.getUserData(FirebaseAuth.instance.currentUser?.uid ?? "");
+      notifyListeners();
     } on FirebaseAuthException catch(e) {
       if(e.code == "'weak-password'") {
         throw "Mật khẩu quá ngắn";
@@ -86,6 +88,8 @@ class AppState extends ChangeNotifier {
       if(e.code == 'email-already-in-use') {
         throw "Tài khoản đã tồn tại";
       }
+    } catch(e) {
+       throw "Không thể đăng ký tài khoản, vui lòng thử lại";
     }
   }
 
@@ -93,6 +97,7 @@ class AppState extends ChangeNotifier {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: data["email"], password: data["password"]);
       user = await StorageService.getUserData(FirebaseAuth.instance.currentUser?.uid ?? "");
+      notifyListeners();
       inspect(user);
     } catch(e) {
       throw "Tài khoản hoặc mật khẩu không đúng";
