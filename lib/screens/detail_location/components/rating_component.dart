@@ -1,82 +1,93 @@
+import 'package:datn/models/user_model.dart';
 import 'package:datn/screens/detail_location/components/rating_dialog.dart';
+import 'package:datn/screens/detail_location/components/requires_login_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:provider/provider.dart';
+
+import '../../../providers/app_state.dart';
 
 class RatingComponent extends StatelessWidget {
   const RatingComponent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Flexible(child: linearRating()),
-        Flexible(
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  '2,0',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                ),
-                RatingBar.builder(
-                  minRating: 1,
-                  itemSize: 30,
-                  ignoreGestures: true,
-                  initialRating: 2,
-                  itemBuilder: (context, _) {
-                    return const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                    );
-                  },
-                  onRatingUpdate: (_) {},
-                ),
-                const SizedBox(
-                  height: 4,
-                ),
-                RichText(
-                  text: const TextSpan(
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: Colors.black,
+    return Selector<AppState, UserModel?>(
+      selector: (ctx, state) => state.user,
+      builder: (ctx, value, _) {
+        return Row(
+          children: [
+            Flexible(child: linearRating()),
+            Flexible(
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      '2,0',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: '20',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                    RatingBar.builder(
+                      minRating: 1,
+                      itemSize: 30,
+                      ignoreGestures: true,
+                      initialRating: 2,
+                      itemBuilder: (context, _) {
+                        return const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        );
+                      },
+                      onRatingUpdate: (_) {},
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    RichText(
+                      text: const TextSpan(
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.black,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: '20',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          TextSpan(
+                            text: ' đánh giá',
+                          ),
+                        ],
                       ),
-                      TextSpan(
-                        text: ' đánh giá',
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    OutlinedButton(
+                      onPressed: () {
+                        showAlertDialog(context, value);
+                      },
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        side: const BorderSide(
+                          color: Colors.blue,
+                          width: 2.0,
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                OutlinedButton(
-                  onPressed: () {
-                    showAlertDialog(context);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      child: const Text('Viết đánh giá'),
                     ),
-                    side: const BorderSide(
-                      color: Colors.blue,
-                      width: 2.0,
-                    ),
-                  ),
-                  child: const Text('Viết đánh giá'),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
@@ -131,6 +142,7 @@ class RatingComponent extends StatelessWidget {
 
   void showAlertDialog(
     BuildContext context,
+    UserModel? userModel,
   ) {
     showDialog(
       context: context,
@@ -139,9 +151,11 @@ class RatingComponent extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        child: const Padding(
-          padding: EdgeInsets.all(16),
-          child: RatingDialogContent(),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: userModel == null
+              ? const RequiresLogin()
+              : const RatingDialogContent(),
         ),
       ),
       barrierDismissible: false,
