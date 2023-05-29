@@ -71,28 +71,30 @@ class AppState extends ChangeNotifier {
   Future signUpUser(Map<String, dynamic> data) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: data["email"], 
-        password: data["password"]
-      );
-      await StorageService.recordUserSignUp(data, FirebaseAuth.instance.currentUser?.uid ?? "");
-      user = await StorageService.getUserData(FirebaseAuth.instance.currentUser?.uid ?? "");
+          email: data["email"], password: data["password"]);
+      await StorageService.recordUserSignUp(
+          data, FirebaseAuth.instance.currentUser?.uid ?? "");
+      user = await StorageService.getUserData(
+          FirebaseAuth.instance.currentUser?.uid ?? "");
       notifyListeners();
-    } on FirebaseAuthException catch(e) {
-      if(e.code == "'weak-password'") {
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "'weak-password'") {
         throw "Mật khẩu quá ngắn";
       }
       if (e.code == 'email-already-in-use') {
         throw "Tài khoản đã tồn tại";
       }
-    } catch(e) {
-       throw "Không thể đăng ký tài khoản, vui lòng thử lại";
+    } catch (e) {
+      throw "Không thể đăng ký tài khoản, vui lòng thử lại";
     }
   }
 
   Future signInUser(Map<String, dynamic> data) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: data["email"], password: data["password"]);
-      user = await StorageService.getUserData(FirebaseAuth.instance.currentUser?.uid ?? "");
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: data["email"], password: data["password"]);
+      user = await StorageService.getUserData(
+          FirebaseAuth.instance.currentUser?.uid ?? "");
       notifyListeners();
       inspect(user);
     } catch (e) {
@@ -107,6 +109,14 @@ class AppState extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       throw "Không thể đăng xuất, vui lòng thử lại";
+    }
+  }
+
+  Future<void> recordRating(Map<String, dynamic> data) async {
+    try {
+      await StorageService.recordRatingItem(data, data['placeId']);
+    } catch (e) {
+      throw "Đánh gia không thành công";
     }
   }
 }

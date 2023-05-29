@@ -9,7 +9,8 @@ import 'package:provider/provider.dart';
 import '../../../providers/app_state.dart';
 
 class RatingComponent extends StatelessWidget {
-  const RatingComponent({super.key});
+  const RatingComponent({super.key, required this.idPlace});
+  final String idPlace;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +69,10 @@ class RatingComponent extends StatelessWidget {
                     ),
                     OutlinedButton(
                       onPressed: () {
-                        showAlertDialog(context, value);
+                        showAlertDialog(
+                          userModel: value,
+                          context: context,
+                        );
                       },
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
@@ -140,10 +144,11 @@ class RatingComponent extends StatelessWidget {
     );
   }
 
-  void showAlertDialog(
-    BuildContext context,
+  void showAlertDialog({
     UserModel? userModel,
-  ) {
+    required BuildContext context,
+    String? title,
+  }) {
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
@@ -155,7 +160,7 @@ class RatingComponent extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: userModel == null
               ? const RequiresLogin()
-              : const RatingDialogContent(),
+              : RatingDialogContent(userModel: userModel, idPlace: idPlace),
         ),
       ),
       barrierDismissible: false,

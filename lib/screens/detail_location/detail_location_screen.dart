@@ -49,7 +49,7 @@ class DetailLocationScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: 4),
-              const RatingComponent(),
+              RatingComponent(idPlace: model.id),
               const Text(
                 'Bình luận',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),

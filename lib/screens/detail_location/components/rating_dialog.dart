@@ -1,11 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datn/models/user_model.dart';
+import 'package:datn/providers/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:loader_overlay/loader_overlay.dart';
+import 'package:provider/provider.dart';
 
 class RatingDialogContent extends StatelessWidget {
-  const RatingDialogContent({super.key});
+  RatingDialogContent({
+    super.key,
+    required this.userModel,
+    required this.idPlace,
+  });
+
+  final String idPlace;
+  final UserModel userModel;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final Map<String, dynamic> _formData = {};
 
   @override
   Widget build(BuildContext context) {
+    final commentController = TextEditingController();
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -26,27 +42,35 @@ class RatingDialogContent extends StatelessWidget {
               color: Colors.amber,
             );
           },
-          onRatingUpdate: (_) {},
+          onRatingUpdate: (value) {
+            _formData["score"] = value;
+            print(_formData["score"]);
+          },
         ),
         const SizedBox(height: 12),
-        const TextField(
+        TextField(
           minLines: 3,
           maxLines: null,
           textAlignVertical: TextAlignVertical.top,
-          decoration: InputDecoration(
-              hintMaxLines: 1,
-              alignLabelWithHint: true,
-              border: OutlineInputBorder(),
-              labelText: 'Bình luận',
-              isDense: true),
+          controller: commentController,
+          decoration: const InputDecoration(
+            hintMaxLines: 1,
+            alignLabelWithHint: true,
+            border: OutlineInputBorder(),
+            labelText: 'Bình luận',
+            isDense: true,
+          ),
         ),
         const SizedBox(height: 12),
-        bottomButton(context),
+        bottomButton(
+          context,
+          commentController.text,
+        ),
       ],
     );
   }
 
-  Widget bottomButton(BuildContext context) {
+  Widget bottomButton(BuildContext context, String? comment) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -67,8 +91,9 @@ class RatingDialogContent extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
+          onPressed: () async {
+            await _rating(context, userModel, comment);
+            //Navigator.pop(context);
           },
           style: OutlinedButton.styleFrom(
             shape: RoundedRectangleBorder(
@@ -83,5 +108,33 @@ class RatingDialogContent extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _rating(
+    BuildContext context,
+    UserModel? userModel,
+    String? comment,
+  ) async {
+    if (userModel == null) {
+      return;
+    }
+    if (_formKey.currentState?.validate() ?? false) {
+      _formKey.currentState?.save();
+      try {
+        _formData["uid"] = (userModel.id).trim();
+        _formData["comment"] = comment ?? "";
+        _formData['date'] = Timestamp.fromDate(DateTime.now());
+
+        context.loaderOverlay.show();
+        print(_formData["comment"]);
+        await context.read<AppState>().recordRating(_formData).then((value) {
+          context.loaderOverlay.hide();
+          Navigator.of(context).pop();
+        });
+      } catch (e) {
+        context.loaderOverlay.hide();
+        //showAlertDialog(context: context, title: e.toString());
+      }
+    }
   }
 }
