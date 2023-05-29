@@ -4,6 +4,7 @@ import 'package:datn/providers/app_state.dart';
 import 'package:datn/screens/drawer/drawer_widget.dart';
 import 'package:datn/screens/map/map_screen.dart';
 import 'package:datn/screens/search/search_screen.dart';
+import 'package:datn/services/location_services.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  Future _onRequestLocation() async {
+    var location = await LocationService.getUserLocation();
+    context.read<AppState>().mapController?.animateCamera(
+      CameraUpdate.newCameraPosition(CameraPosition(target: location, zoom: defaultMapZoom))
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final GlobalKey<ScaffoldState> _key = GlobalKey();
@@ -36,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
             ),
-             Container(
+          Container(
               margin: const EdgeInsets.fromLTRB(0, 10, 20, 10),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -75,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   FocusManager.instance.primaryFocus?.unfocus();
                                   final result = await Navigator.of(context).pushNamed(SearchScreen.id);
                                   if(result != null && result is LatLng) {
-                                      print("Here");
                                       context.read<AppState>().mapController?.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: result,zoom: defaultMapZoom)));
                                   }
                                 },
@@ -128,6 +136,47 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+            Positioned(
+              bottom: 10,
+              left: 10,
+              child: Selector<AppState,bool>(
+                selector: (ctx,state) => state.userDirection != null,
+                builder: (ctx, value,_) {
+                  if(!value) return const SizedBox();
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          context.read<AppState>().userDirection = null;
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          padding: const EdgeInsets.all(10),
+                          child: const Icon(Icons.close),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () => _onRequestLocation(),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          padding: const EdgeInsets.all(10),
+                          child: const Icon(Icons.my_location),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              ),
+            )
           ],
         )
       ),
