@@ -9,6 +9,8 @@ class PlaceModel {
   late final int type;
   late final LatLng latLong;
   late final String id;
+  List? listPreviewImg;
+  int? totalReviews;
 
   PlaceModel.fromSnapShot(
       QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -20,6 +22,7 @@ class PlaceModel {
     previewImg = data['previewImg'] ?? "";
     type = data['type'] ?? "";
     latLong = LatLng(geoPoint.latitude, geoPoint.longitude);
+    listPreviewImg = data['listPreviewImg'] ?? [];
   }
 
   operator ==(Object other) {

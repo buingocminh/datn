@@ -54,7 +54,6 @@ class MyApp extends StatelessWidget {
             SearchScreen.id: (_) => const SearchScreen(),
             SignInScreen.id: (_) => const SignInScreen(),
             SignUpScreen.id: (_) => const SignUpScreen(),
-            DetailLocationScreen.id: (_) => const DetailLocationScreen(),
           },
         ),
       ),

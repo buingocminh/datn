@@ -29,7 +29,6 @@ class StorageService {
         list.add(placeType);
       }
     }
-    print(list);
     return list;
   }
 

@@ -1,6 +1,7 @@
 import 'package:datn/configs/constants.dart';
 import 'package:datn/models/place_model.dart';
 import 'package:datn/providers/app_state.dart';
+import 'package:datn/screens/detail_location/detail_location_screen.dart';
 import 'package:datn/screens/drawer/drawer_widget.dart';
 import 'package:datn/screens/map/map_screen.dart';
 import 'package:datn/screens/search/search_screen.dart';
@@ -99,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               onSelected: (val) {
                                 if(val) {
                                   ctx.read<AppState>().sortedType = value.item2[index]["id"];
+                                  Navigator.pushNamed(context, DetailLocationScreen.id);
                                 } else {
                                   ctx.read<AppState>().sortedType = null;
                                 }
