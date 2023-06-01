@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datn/common/string_extension.dart';
+import 'package:datn/models/rate_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PlaceModel {
@@ -11,6 +12,7 @@ class PlaceModel {
   late final String id;
   List? listPreviewImg;
   int? totalReviews;
+  List<RateModel>? placeRatings;
 
   PlaceModel.fromSnapShot(
       QueryDocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -22,7 +24,7 @@ class PlaceModel {
     previewImg = data['previewImg'] ?? "";
     type = data['type'] ?? "";
     latLong = LatLng(geoPoint.latitude, geoPoint.longitude);
-    listPreviewImg = data['listPreviewImg'] ?? [];
+    listPreviewImg = data['imageList'] ?? [];
   }
 
   operator ==(Object other) {

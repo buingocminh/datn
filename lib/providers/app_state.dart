@@ -1,11 +1,15 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datn/models/place_model.dart';
+import 'package:datn/models/rate_model.dart';
 import 'package:datn/services/location_services.dart';
 import 'package:datn/services/storage_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 
 import '../configs/constants.dart';
 import '../models/user_model.dart';
@@ -112,11 +116,95 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  Future<void> recordRating(Map<String, dynamic> data) async {
+  Future<void> recordRating(RateModel data) async {
     try {
-      await StorageService.recordRatingItem(data, data['placeId']);
+      await StorageService.recordRatingItem(data);
     } catch (e) {
       throw "Đánh gia không thành công";
+    }
+  }
+
+  List<RateModel> convertRatingData(List<DocumentSnapshot<Object?>> documents) {
+    var listRatings = <RateModel>[];
+    for (var document in documents) {
+      var data = document.data() as Map<String, dynamic>;
+      Timestamp timestamp = document['date'];
+
+      listRatings.add(
+        RateModel(
+          id: document.id,
+          userId: data['userId'] ?? '',
+          comment: data['comment'] ?? '',
+          dateTime: timestamp.toDate(),
+          score: double.tryParse(data['score'].toString()) ?? 0.0,
+          userName: data['nameUser'] ?? '',
+        ),
+      );
+    }
+    return listRatings;
+  }
+
+  String convertDateTime(DateTime dateTime) {
+    if (isSameDay(dateTime, DateTime.now())) {
+      return DateFormat('HH:mm').format(dateTime);
+    }
+    return DateFormat('yyyy/MM/dd').format(dateTime);
+  }
+
+  TotalRateModel countRating(List<RateModel> listRatings) {
+    final listStar = TotalRateModel(
+      oneStar: 0,
+      twoStar: 0,
+      threeStar: 0,
+      fourStar: 0,
+      fiveStar: 0,
+    );
+
+    for (final item in listRatings) {
+      if (item.score == 1.0) {
+        listStar.oneStar++;
+        continue;
+      }
+      if (item.score == 2.0) {
+        listStar.twoStar++;
+        continue;
+      }
+      if (item.score == 3.0) {
+        listStar.threeStar++;
+        continue;
+      }
+      if (item.score == 4.0) {
+        listStar.fourStar++;
+        continue;
+      }
+      listStar.fiveStar++;
+    }
+
+    return listStar;
+  }
+
+  bool checkUserCommented(List<RateModel> listRatings, String uid) {
+    if (uid == '') {
+      return false;
+    }
+    if (listRatings.firstWhereOrNull((element) => element.userId == uid) !=
+        null) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isSameDay(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day;
+  }
+
+  Future<void> getRatingPlace(String idPlace) async {
+    try {
+      await StorageService.getRatingPlace(idPlace);
+    } catch (e) {
+      throw "Something wrong";
     }
   }
 }

@@ -50,6 +50,8 @@ dependencies:
   firebase_auth: ^4.6.1
   loader_overlay: ^2.2.0
   flutter_svg: ^2.0.5
+  intl: ^0.18.1
+
   # location: ^4.4.0
 
   #image

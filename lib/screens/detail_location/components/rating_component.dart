@@ -1,3 +1,4 @@
+import 'package:datn/models/rate_model.dart';
 import 'package:datn/models/user_model.dart';
 import 'package:datn/screens/detail_location/components/rating_dialog.dart';
 import 'package:datn/screens/detail_location/components/requires_login_dialog.dart';
@@ -9,33 +10,46 @@ import 'package:provider/provider.dart';
 import '../../../providers/app_state.dart';
 
 class RatingComponent extends StatelessWidget {
-  const RatingComponent({super.key, required this.idPlace});
+  const RatingComponent({
+    super.key,
+    required this.idPlace,
+    required this.namePlace,
+    required this.rateModels,
+    required this.totalRateModel,
+  });
   final String idPlace;
+  final String namePlace;
+  final List<RateModel> rateModels;
+  final TotalRateModel totalRateModel;
 
   @override
   Widget build(BuildContext context) {
     return Selector<AppState, UserModel?>(
       selector: (ctx, state) => state.user,
       builder: (ctx, value, _) {
+        if (totalRateModel.total == 0) {
+          return emptyRating(context: context, userModel: value);
+        }
         return Row(
           children: [
-            Flexible(child: linearRating()),
+            Flexible(child: linearRating(totalRateModel)),
             Flexible(
               child: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      '2,0',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    Text(
+                      totalRateModel.totalStarPercent.toStringAsFixed(1),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.w600),
                     ),
                     RatingBar.builder(
                       minRating: 1,
                       itemSize: 30,
                       ignoreGestures: true,
-                      initialRating: 2,
+                      allowHalfRating: true,
+                      initialRating: totalRateModel.totalStarPercent,
                       itemBuilder: (context, _) {
                         return const Icon(
                           Icons.star,
@@ -48,18 +62,18 @@ class RatingComponent extends StatelessWidget {
                       height: 4,
                     ),
                     RichText(
-                      text: const TextSpan(
-                        style: TextStyle(
+                      text: TextSpan(
+                        style: const TextStyle(
                           fontSize: 14.0,
                           color: Colors.black,
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: '20',
+                            text: totalRateModel.total.toString(),
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          TextSpan(
-                            text: ' đánh giá',
+                          const TextSpan(
+                            text: ' Lượt đánh giá',
                           ),
                         ],
                       ),
@@ -67,24 +81,7 @@ class RatingComponent extends StatelessWidget {
                     const SizedBox(
                       height: 12,
                     ),
-                    OutlinedButton(
-                      onPressed: () {
-                        showAlertDialog(
-                          userModel: value,
-                          context: context,
-                        );
-                      },
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        side: const BorderSide(
-                          color: Colors.blue,
-                          width: 2.0,
-                        ),
-                      ),
-                      child: const Text('Viết đánh giá'),
-                    ),
+                    ratingButton(context: context, userModel: value)
                   ],
                 ),
               ),
@@ -95,28 +92,78 @@ class RatingComponent extends StatelessWidget {
     );
   }
 
-  Widget linearRating() {
+  Widget emptyRating({
+    UserModel? userModel,
+    required BuildContext context,
+  }) {
+    return Center(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Chưa có lượt đánh giá nào ',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          ratingButton(context: context, userModel: userModel)
+        ],
+      ),
+    );
+  }
+
+  Widget ratingButton({
+    UserModel? userModel,
+    required BuildContext context,
+  }) {
+    return OutlinedButton(
+      onPressed: !context
+              .read<AppState>()
+              .checkUserCommented(rateModels, userModel?.id ?? '')
+          ? () {
+              showAlertDialog(
+                userModel: userModel,
+                context: context,
+              );
+            }
+          : null,
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        side: const BorderSide(
+          color: Colors.blue,
+          width: 2.0,
+        ),
+      ),
+      child: const Text('Viết đánh giá'),
+    );
+  }
+
+  Widget linearRating(TotalRateModel totalRateModel) {
     return Column(
       children: [
         linearPercentWidget(
           title: '5',
-          percent: 0.9,
+          percent: totalRateModel.fiveStarPercent,
         ),
         linearPercentWidget(
           title: '4',
-          percent: 0.9,
+          percent: totalRateModel.fourStarPercent,
         ),
         linearPercentWidget(
           title: '3',
-          percent: 0.9,
+          percent: totalRateModel.threeStarPercent,
         ),
         linearPercentWidget(
           title: '2',
-          percent: 0.9,
+          percent: totalRateModel.twoStarPercent,
         ),
         linearPercentWidget(
           title: '1',
-          percent: 0.9,
+          percent: totalRateModel.oneStarPercent,
         ),
       ],
     );
@@ -160,7 +207,11 @@ class RatingComponent extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: userModel == null
               ? const RequiresLogin()
-              : RatingDialogContent(userModel: userModel, idPlace: idPlace),
+              : RatingDialogContent(
+                  userModel: userModel,
+                  idPlace: idPlace,
+                  namePlace: namePlace,
+                ),
         ),
       ),
       barrierDismissible: false,

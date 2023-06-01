@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datn/configs/constants.dart';
 import 'package:datn/models/place_model.dart';
+import 'package:datn/models/rate_model.dart';
 import 'package:datn/services/log_service.dart';
 
 import '../models/user_model.dart';
@@ -53,6 +54,8 @@ class StorageService {
     return list;
   }
 
+   
+
   static Future<List<PlaceModel>> searchPlaceByKeyWord(String? key) async {
     List<PlaceModel> list = await getPlaceData();
     if (key == null) return [];
@@ -70,22 +73,39 @@ class StorageService {
         .set({"id": id, "name": data["name"], "email": data['email']});
   }
 
-  static Future recordRatingItem(
-      Map<String, dynamic> data, String placeId) async {
+  static Future recordRatingItem(RateModel data) async {
     await _instance
         .collection(baseDoccumentStorage)
         .doc(placeDoccumentName)
         .collection('data')
-        .doc(placeId)
+        .doc(data.id)
         .collection('rate')
         .doc()
         .set({
-      "uid": data["id"],
-      "comment": data["comment"],
-      "date": data["dateTime"],
-      "score": data["score"],
+      "nameUser": data.userName,
+      "uid": data.userId,
+      "comment": data.comment,
+      "date": Timestamp.fromDate(data.dateTime),
+      "score": data.score,
     });
   }
+
+   static Future<List<RateModel>> getRatingPlace(String  idPlace) async {
+    List<RateModel> list = [];
+    final datas = await _instance
+        .collection(baseDoccumentStorage)
+        .doc(placeDoccumentName)
+        .collection("data")
+        .doc(idPlace)
+        .collection('rate')
+        .get();
+    for (var data in datas.docs) {
+      list.add(RateModel.fromSnapShot(data));
+    }
+    Logger.log(list);
+    return list;
+  }
+
 
   static Future<UserModel> getUserData(String id) async {
     var result = await _instance

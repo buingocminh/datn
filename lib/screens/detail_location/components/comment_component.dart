@@ -1,21 +1,32 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:datn/models/rate_model.dart';
+import 'package:datn/providers/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
 
 class CommentComponent extends StatelessWidget {
-  const CommentComponent({super.key});
+  const CommentComponent({
+    super.key,
+    required this.rateModel,
+  });
+  final RateModel rateModel;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        userInfo(),
+        userInfo(
+          context: context,
+          name: rateModel.userName,
+          dateTime: rateModel.dateTime,
+        ),
         const SizedBox(height: 5),
         RatingBar.builder(
           minRating: 1,
           itemSize: 15,
-          initialRating: 5,
+          initialRating: rateModel.score,
           unratedColor: Colors.grey[300],
           itemBuilder: (context, _) {
             return const Icon(
@@ -26,15 +37,21 @@ class CommentComponent extends StatelessWidget {
           onRatingUpdate: (_) {},
         ),
         const SizedBox(height: 5),
-        const Text(
-          'Comment áds adas ds ada sdj kfs ahf jkas hd fkjl hasldj kfh ajks dh fl jka sd hfj',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+        Text(
+          rateModel.comment,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+          ),
         ),
       ],
     );
   }
 
-  Widget userInfo() {
+  Widget userInfo(
+      {required String name,
+      required DateTime dateTime,
+      required BuildContext context}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -55,14 +72,20 @@ class CommentComponent extends StatelessWidget {
         const SizedBox(width: 10),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
-              'Nguyễn Văn A',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+              name,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+              ),
             ),
             Text(
-              '23/05/2022',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300),
+              context.read<AppState>().convertDateTime(dateTime),
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w300,
+              ),
             ),
           ],
         ),
