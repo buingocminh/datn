@@ -1,8 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:datn/configs/constants.dart';
 import 'package:datn/models/user_model.dart';
 import 'package:datn/providers/app_state.dart';
 import 'package:datn/screens/auth/sign_in_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+
+import '../../models/place_model.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -49,33 +54,88 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   ),
                 );
               } else {
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const CircleAvatar(
-                        radius: 30,
+                return Column(
+                  children: [
+                    const CircleAvatar(
+                      radius: 30,
+                    ),
+                    Text(
+                      value.name,
+                      textAlign: TextAlign.center,
+                    ),
+                    DrawerButton(
+                      const Icon(Icons.logout), 
+                      "Đăng xuất", 
+                      () {
+                        context.read<AppState>().logoutUser();
+                      }
+                    ),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Địa điểm ưa thích của bạn",
                       ),
-                      Text(
-                        value.name,
-                        textAlign: TextAlign.center,
+                    ),
+                    Expanded(
+                      child: Selector<AppState, List<PlaceModel>>(
+                        selector: (ctx, state) => state.favoritePlace,
+                        shouldRebuild:(previous, next) => true,
+                        builder: (context, value, child) {
+                          if(value.isEmpty) {
+                            return const Center(
+                              child: Text(
+                                "Bạn chưa thêm địa điểm ưa thích nào cả",
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          }
+                          return ListView.builder(
+                            itemCount: value.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                minVerticalPadding: 0,
+                                leading:  ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: CachedNetworkImage(
+                                    imageUrl: value[index].previewImg,
+                                    placeholder: (context, url) => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                    fit: BoxFit.cover,
+                                    width: 50,
+                                    height: 50,
+                                    errorWidget: (context, url, error) => const Icon(Icons.error),
+                                  ),
+                                ),
+                                title: Text(
+                                  value[index].name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                subtitle: Text(
+                                  value[index].address,
+                                ),
+                                onTap: () {
+                                  context.read<AppState>().sortedType = null;
+                                  context.read<AppState>().mapController?.animateCamera(
+                                    CameraUpdate.newCameraPosition(
+                                      CameraPosition(
+                                        target: value[index].latLong,
+                                        zoom: defaultMapZoom
+                                      ),
+                                    )
+                                  );
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            },
+                          );
+                        },
                       ),
-                      DrawerButton(
-                        const Icon(Icons.logout), 
-                        "Đăng xuất", 
-                        () {
-                          context.read<AppState>().logoutUser();
-                        }
-                      ),
-                      const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Địa điểm ưa thích của bạn",
-                        ),
-                      ),
-                      //TODO add logic here
-                      // Expanded()
-                    ],
-                  ),
+                    )
+                  ],
                 );
               }
             }

@@ -22,6 +22,7 @@ class AppState extends ChangeNotifier {
   GoogleMapController? mapController;
   Polyline? _userDirection;
   UserModel? user;
+  List<PlaceModel> favoritePlace = [];
 
   int? get sortedType => _sortedType;
   Polyline? get userDirection => _userDirection;
@@ -29,7 +30,10 @@ class AppState extends ChangeNotifier {
   AppState() {
     if (FirebaseAuth.instance.currentUser != null) {
       StorageService.getUserData(FirebaseAuth.instance.currentUser?.uid ?? "")
-          .then((value) => user = value);
+          .then((value) {
+             user = value;
+             getUserFavoriteData();
+          });
     }
   }
 
@@ -104,6 +108,7 @@ class AppState extends ChangeNotifier {
           email: data["email"], password: data["password"]);
       user = await StorageService.getUserData(
           FirebaseAuth.instance.currentUser?.uid ?? "");
+      getUserFavoriteData();
       notifyListeners();
       inspect(user);
     } catch (e) {
@@ -115,11 +120,52 @@ class AppState extends ChangeNotifier {
     try {
       await FirebaseAuth.instance.signOut();
       user = null;
+      favoritePlace = [];
       notifyListeners();
     } catch (e) {
       throw "Không thể đăng xuất, vui lòng thử lại";
     }
   }
+
+  Future getUserFavoriteData() async {
+    favoritePlace = await StorageService.getPlaceById(user?.favoritePlaces ?? []);
+    notifyListeners();
+  }
+
+  Future addUserFavoritePlace(PlaceModel place) async {
+    if(!favoritePlace.contains(place)) {
+      favoritePlace.add(place);
+      user?.favoritePlaces.add(place.id);
+      notifyListeners();
+      try {
+        await StorageService.updateUserData(user);
+      } catch(e) {
+        favoritePlace.remove(place);
+        user?.favoritePlaces.remove(place.id);
+        notifyListeners();
+      }
+    }
+  }
+
+  Future removeUserFavoritePlace(PlaceModel place) async {
+    if(favoritePlace.contains(place)) {
+      favoritePlace.remove(place);
+      user?.favoritePlaces.remove(place.id);
+      notifyListeners();
+      try {
+        await StorageService.updateUserData(user);
+      } catch(e) {
+        favoritePlace.add(place);
+        user?.favoritePlaces.add(place.id);
+        notifyListeners();
+      }
+    }
+  }
+
+  bool isPlaceFavorite(PlaceModel place) {
+    return favoritePlace.contains(place);
+  }
+
 
   Future<void> recordRating(RateModel data) async {
     try {

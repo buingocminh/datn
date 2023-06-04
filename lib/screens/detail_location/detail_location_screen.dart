@@ -6,6 +6,7 @@ import 'package:datn/providers/app_state.dart';
 import 'package:datn/screens/detail_location/components/comment_component.dart';
 import 'package:datn/screens/detail_location/components/near_location_item.dart';
 import 'package:datn/screens/detail_location/components/rating_component.dart';
+import 'package:datn/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,6 +30,29 @@ class _DetailLocationScreenState extends State<DetailLocationScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(widget.model.name),
+        actions: [
+          Selector<AppState, bool>(
+            selector: (ctx, state) => state.isPlaceFavorite(widget.model),
+            builder: (ctx, value, _) {
+              return GestureDetector(
+                onTap: () {
+                  if(value) {
+                    ctx.read<AppState>().removeUserFavoritePlace(widget.model);
+                  } else {
+                    ctx.read<AppState>().addUserFavoritePlace(widget.model);
+                  }
+                },
+                behavior: HitTestBehavior.translucent,
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Icon(
+                    value ? Icons.favorite : Icons.favorite_border_outlined
+                  ),
+                ),
+              );
+            }
+          )
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _instance
@@ -123,15 +147,24 @@ class _DetailLocationScreenState extends State<DetailLocationScreen> {
   }
 
   Widget listNearLocation() {
-    return ListView.separated(
-      itemCount: 5,
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        return const NearLocationItem();
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return const SizedBox(width: 5.0);
-      },
+    return FutureBuilder<List<PlaceModel>>(
+      future: StorageService.getNearestPlace(widget.model),
+      builder: (ctx, snapShot) {
+        if(snapShot.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator(),);
+        if(snapShot.data?.isEmpty ?? true) return const SizedBox();
+        return ListView.separated(
+          itemCount: snapShot.data!.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            return NearLocationItem(
+              place: snapShot.data![index]
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return const SizedBox(width: 5.0);
+          },
+        );
+      }
     );
   }
 

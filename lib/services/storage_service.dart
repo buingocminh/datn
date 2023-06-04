@@ -3,6 +3,7 @@ import 'package:datn/configs/constants.dart';
 import 'package:datn/models/place_model.dart';
 import 'package:datn/models/rate_model.dart';
 import 'package:datn/services/log_service.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../models/user_model.dart';
 
@@ -116,12 +117,48 @@ class StorageService {
         .get();
     if (result.exists) {
       var data = result.data() ?? {};
-      return UserModel(
+      try {
+        return UserModel(
           id: data["id"] ?? "",
           name: data['name'] ?? "",
-          email: data["email"] ?? "");
+          email: data["email"] ?? "",
+          favoritePlaces: ((data['favoritePlaces']  ?? <String>[]) as List<dynamic>).map((e) => e.toString()).toList()
+        );
+      } catch(e) {
+        print(e.toString());
+      }
     }
     throw "Tài khoản hoặc mật khẩu không đúng";
+  }
+
+  static Future< List<PlaceModel>> getPlaceById( List<String> ids) async {
+    List<PlaceModel> place = [];
+    place = (await getPlaceData()).where((element) => ids.contains(element.id)).toList();
+    return place;
+  }
+
+  static Future updateUserData(UserModel? model) async {
+    if(model == null) return;
+    try {
+      await _instance
+      .collection(baseDoccumentStorage)
+      .doc(userDoccumentName)
+      .collection("data")
+      .doc(model.id).update(model.toJson);
+    } catch(e) {
+      rethrow;
+    }
+  }
+
+  static Future<List<PlaceModel>> getNearestPlace(PlaceModel model) async {
+    List<PlaceModel> list = [];
+    list = (await getPlaceData())..sort((p1, p2) =>(_caculateDistance(model, p1).compareTo(_caculateDistance(model, p2))) );
+    list = list.sublist(1,5);
+    return list;
+  }
+
+ static double _caculateDistance(PlaceModel p1, PlaceModel p2) {
+    return Geolocator.distanceBetween(p1.latLong.latitude, p1.latLong.longitude, p2.latLong.latitude, p2.latLong.longitude);
   }
 
   // static Future<List<PlaceModel>> searchPlaceByKeyWord(String? key) async {
