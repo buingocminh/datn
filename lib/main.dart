@@ -1,4 +1,5 @@
 import 'package:datn/providers/app_state.dart';
+import 'package:datn/screens/detail_location/detail_location_screen.dart';
 import 'package:datn/screens/auth/sign_in_screen.dart';
 import 'package:datn/screens/home_screen.dart';
 import 'package:datn/screens/search/search_screen.dart';
@@ -17,14 +18,10 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
   await Firebase.initializeApp();
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AppState())
-      ],
-      child: const MyApp(),
-    )
-  );
+  runApp(MultiProvider(
+    providers: [ChangeNotifierProvider(create: (_) => AppState())],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -40,7 +37,9 @@ class MyApp extends StatelessWidget {
         }
       },
       child: GlobalLoaderOverlay(
-        overlayWidget: const Center(child: CircularProgressIndicator(),),
+        overlayWidget: const Center(
+          child: CircularProgressIndicator(),
+        ),
         useDefaultLoading: false,
         child: MaterialApp(
           title: 'DATN',
@@ -49,7 +48,6 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
           ),
           initialRoute: SplashScreen.id,
-          // initialRoute: SignInScreen.id,
           routes: {
             SplashScreen.id: (_) => const SplashScreen(),
             HomeScreen.id: (_) => const HomeScreen(),
@@ -57,7 +55,6 @@ class MyApp extends StatelessWidget {
             SignInScreen.id: (_) => const SignInScreen(),
             SignUpScreen.id: (_) => const SignUpScreen(),
           },
-          
         ),
       ),
     );
