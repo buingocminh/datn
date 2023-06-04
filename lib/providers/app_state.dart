@@ -48,6 +48,11 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  set userDirection(Polyline? value) {
+    _userDirection = value;
+    notifyListeners();
+  }
+
   Future setUserDirection(LatLng place) async {
     userLocation = await LocationService.getUserLocation();
     var result = await LocationService.getDirection(userLocation, place);
@@ -57,7 +62,7 @@ class AppState extends ChangeNotifier {
         color: Colors.blue.shade300,
         width: 5);
     mapController?.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: userLocation, zoom: defaultMapZoom)));
+        CameraPosition(target: result.first, zoom: defaultMapZoom)));
     notifyListeners();
   }
 
