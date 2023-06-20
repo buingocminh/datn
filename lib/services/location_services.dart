@@ -39,7 +39,7 @@ class LocationService {
     List<LatLng> list = [];
     var response = await http.get(
       Uri.parse(
-          "https://rsapi.goong.io/Direction?origin=${place.locationString}&destination=${drop.locationString}&vehicle=car&api_key=$goongApikey"),
+          "https://rsapi.goong.io/Direction?origin=${place.locationString}&destination=${drop.locationString}&vehicle=bike&api_key=$goongApikey"),
       // headers: {
 
       // }

@@ -31,9 +31,11 @@ class _SearchScreenState extends State<SearchScreen> {
   void _onTextFieldChange(String? value) {
     if(_debounceTimner?.isActive ?? false) _debounceTimner?.cancel();
     if(value == null || value.trim().isEmpty) {
+      print("empty");
       setState(() {
         _status = SearchBarStatus.idle;
       });
+      return;
     }
     _debounceTimner = Timer(
         const Duration(milliseconds: 500), 
@@ -107,6 +109,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(
+                height: 10,
               ),
               Expanded(
                 child: Builder(

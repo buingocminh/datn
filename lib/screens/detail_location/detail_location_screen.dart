@@ -94,14 +94,37 @@ class _DetailLocationScreenState extends State<DetailLocationScreen> {
                     child: listImage(),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Địa chỉ',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.model.address,
-                    style: const TextStyle(fontSize: 13),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Địa chỉ',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              widget.model.address,
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          context.read<AppState>().setUserDirection(widget.model.latLong);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.directions
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                   const SizedBox(height: 12),
                   const Text(

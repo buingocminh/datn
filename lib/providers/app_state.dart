@@ -66,7 +66,7 @@ class AppState extends ChangeNotifier {
         color: Colors.blue.shade300,
         width: 5);
     mapController?.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: result.first, zoom: defaultMapZoom)));
+        CameraPosition(target: result.first, zoom: 20)));
     notifyListeners();
   }
 

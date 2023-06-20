@@ -38,7 +38,7 @@ class _MapWidgetState extends State<MapWidget> {
           label: place.name,
           markerId: MarkerId(place.id),
           textStyle: const TextStyle(
-            fontSize: 16,
+            fontSize: 27,
           ),
           position: place.latLong,
           infoWindow: InfoWindow(

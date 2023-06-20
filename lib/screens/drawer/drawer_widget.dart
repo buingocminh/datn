@@ -56,8 +56,28 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               } else {
                 return Column(
                   children: [
-                    const CircleAvatar(
-                      radius: 30,
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle
+                      ),
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            'https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg',
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                        fit: BoxFit.cover,
+                        width: 60,
+                        height: 60,
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 5,
                     ),
                     Text(
                       value.name,
