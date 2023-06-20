@@ -44,19 +44,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }),
           Container(
-            margin: const EdgeInsets.fromLTRB(0, 10, 20, 10),
+            margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => _key.currentState!.openDrawer(),
-                      child: const Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Icon(Icons.menu),
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () => _key.currentState!.openDrawer(),
+                    //   child: const Padding(
+                    //     padding: EdgeInsets.all(10.0),
+                    //     child: Icon(Icons.menu),
+                    //   ),
+                    // ),
                     Expanded(
                       child: ColoredBox(
                         color: Colors.white,

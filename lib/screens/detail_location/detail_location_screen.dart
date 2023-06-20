@@ -30,29 +30,29 @@ class _DetailLocationScreenState extends State<DetailLocationScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(widget.model.name),
-        actions: [
-          Selector<AppState, bool>(
-            selector: (ctx, state) => state.isPlaceFavorite(widget.model),
-            builder: (ctx, value, _) {
-              return GestureDetector(
-                onTap: () {
-                  if(value) {
-                    ctx.read<AppState>().removeUserFavoritePlace(widget.model);
-                  } else {
-                    ctx.read<AppState>().addUserFavoritePlace(widget.model);
-                  }
-                },
-                behavior: HitTestBehavior.translucent,
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Icon(
-                    value ? Icons.favorite : Icons.favorite_border_outlined
-                  ),
-                ),
-              );
-            }
-          )
-        ],
+        // actions: [
+        //   Selector<AppState, bool>(
+        //     selector: (ctx, state) => state.isPlaceFavorite(widget.model),
+        //     builder: (ctx, value, _) {
+        //       return GestureDetector(
+        //         onTap: () {
+        //           if(value) {
+        //             ctx.read<AppState>().removeUserFavoritePlace(widget.model);
+        //           } else {
+        //             ctx.read<AppState>().addUserFavoritePlace(widget.model);
+        //           }
+        //         },
+        //         behavior: HitTestBehavior.translucent,
+        //         child: Padding(
+        //           padding: const EdgeInsets.all(10),
+        //           child: Icon(
+        //             value ? Icons.favorite : Icons.favorite_border_outlined
+        //           ),
+        //         ),
+        //       );
+        //     }
+        //   )
+        // ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _instance
@@ -112,44 +112,49 @@ class _DetailLocationScreenState extends State<DetailLocationScreen> {
                           ],
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          context.read<AppState>().setUserDirection(widget.model.latLong);
-                          Navigator.of(context).pop();
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.directions
-                          ),
-                        ),
-                      )
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     context.read<AppState>().setUserDirection(widget.model.latLong);
+                      //     Navigator.of(context).pop();
+                      //   },
+                      //   child: const Padding(
+                      //     padding: EdgeInsets.all(8.0),
+                      //     child: Icon(
+                      //       Icons.directions
+                      //     ),
+                      //   ),
+                      // )
                     ],
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Tổng hợp đánh giá',
+                    'Thông tin',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   ),
-                  const SizedBox(height: 4),
-                  RatingComponent(
-                    idPlace: widget.model.id,
-                    namePlace: widget.model.name,
-                    rateModels: listRatings,
-                    totalRateModel:
-                        context.read<AppState>().countRating(listRatings),
+                  Text(
+                    """- Nằm ngay trước cổng ĐH Thủy Lợi nên có không gian tương đối rộng rãi. Đặc biệt có cực kỳ nhiều quán trà đá, quán nước cho sinh viên giải lao
+- Có sân cầu lông kẻ vẽ khá chuẩn.
+"""
                   ),
-                  const Text(
-                    'Bình luận',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 8),
-                  listComment(listRatings),
-                  const Divider(
-                    height: 20,
-                    color: Colors.grey,
-                    thickness: 1,
-                  ),
+                  // const SizedBox(height: 4),
+                  // RatingComponent(
+                  //   idPlace: widget.model.id,
+                  //   namePlace: widget.model.name,
+                  //   rateModels: listRatings,
+                  //   totalRateModel:
+                  //       context.read<AppState>().countRating(listRatings),
+                  // ),
+                  // const Text(
+                  //   'Bình luận',
+                  //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                  // ),
+                  // const SizedBox(height: 8),
+                  // listComment(listRatings),
+                  // const Divider(
+                  //   height: 20,
+                  //   color: Colors.grey,
+                  //   thickness: 1,
+                  // ),
                   const SizedBox(height: 12),
                   const Text(
                     'Địa điểm liên quan',
