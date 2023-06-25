@@ -71,13 +71,17 @@ class AppState extends ChangeNotifier {
   }
 
   Future init() async {
-    final permisstion = await LocationService.getUserPermission();
+    try {
+      final permisstion = await LocationService.getUserPermission();
 
-    if (permisstion) {
-      userLocation = await LocationService.getUserLocation();
+      if (permisstion) {
+        userLocation = await LocationService.getUserLocation();
+      }
+      listPlace = await StorageService.getPlaceData();
+      listPlaceType = await StorageService.getPlaceType();
+    } catch(e) {
+      print(e.toString());
     }
-    listPlace = await StorageService.getPlaceData();
-    listPlaceType = await StorageService.getPlaceType();
     notifyListeners();
   }
 

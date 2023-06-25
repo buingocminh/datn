@@ -1,7 +1,6 @@
 import 'package:datn/configs/constants.dart';
 import 'package:datn/models/place_model.dart';
 import 'package:datn/providers/app_state.dart';
-import 'package:datn/screens/drawer/drawer_widget.dart';
 import 'package:datn/screens/map/map_screen.dart';
 import 'package:datn/screens/search/search_screen.dart';
 import 'package:datn/services/location_services.dart';
@@ -31,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final GlobalKey<ScaffoldState> _key = GlobalKey();
     return Scaffold(
       key: _key,
-      drawer: const DrawerWidget(),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
           child: Stack(
@@ -50,13 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    // GestureDetector(
-                    //   onTap: () => _key.currentState!.openDrawer(),
-                    //   child: const Padding(
-                    //     padding: EdgeInsets.all(10.0),
-                    //     child: Icon(Icons.menu),
-                    //   ),
-                    // ),
                     Expanded(
                       child: ColoredBox(
                         color: Colors.white,
@@ -134,7 +125,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 }
                               },
                             );
-                            // return Text(value[index]['name']);
                           },
                         );
                       }),

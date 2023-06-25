@@ -17,6 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
       context.read<AppState>().init(),
       Future.delayed(const Duration(milliseconds: 500))
     ]).then((value) {
+      print("OK");
       Navigator.of(context).pushReplacementNamed(HomeScreen.id);
     });
   }

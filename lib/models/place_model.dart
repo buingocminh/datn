@@ -10,6 +10,7 @@ class PlaceModel {
   late final int type;
   late final LatLng latLong;
   late final String id;
+  late final String? description;
   List? listPreviewImg;
   int? totalReviews;
   List<RateModel>? placeRatings;
@@ -25,6 +26,7 @@ class PlaceModel {
     type = data['type'] ?? "";
     latLong = LatLng(geoPoint.latitude, geoPoint.longitude);
     listPreviewImg = data['imageList'] ?? [];
+    description = data['description'];
   }
 
   operator ==(Object other) {

@@ -1,6 +1,4 @@
 import 'package:datn/providers/app_state.dart';
-import 'package:datn/screens/detail_location/detail_location_screen.dart';
-import 'package:datn/screens/auth/sign_in_screen.dart';
 import 'package:datn/screens/home_screen.dart';
 import 'package:datn/screens/search/search_screen.dart';
 import 'package:datn/screens/splash/splash_screen.dart';
@@ -10,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/auth/sign_up_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,8 +49,6 @@ class MyApp extends StatelessWidget {
             SplashScreen.id: (_) => const SplashScreen(),
             HomeScreen.id: (_) => const HomeScreen(),
             SearchScreen.id: (_) => const SearchScreen(),
-            SignInScreen.id: (_) => const SignInScreen(),
-            SignUpScreen.id: (_) => const SignUpScreen(),
           },
         ),
       ),

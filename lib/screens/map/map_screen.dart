@@ -1,6 +1,5 @@
 import 'package:datn/models/place_model.dart';
 import 'package:datn/screens/detail_location/detail_location_screen.dart';
-import 'package:datn/screens/place/place_info_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:label_marker/label_marker.dart';
@@ -71,7 +70,6 @@ class _MapWidgetState extends State<MapWidget> {
   @override
   void dispose() {
     super.dispose();
-    // context.read<AppState>().mapController = null;
     _controller?.dispose();
   }
 

@@ -75,26 +75,4 @@ class NearLocationItem extends StatelessWidget {
       ),
     );
   }
-
-  // Widget ratingContent() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 4.0),
-  //     child: Row(
-  //       children: const [
-  //         Text(
-  //           '4,3 ',
-  //           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-  //         ),
-  //         Icon(
-  //           Icons.star,
-  //           color: Colors.amber,
-  //         ),
-  //         Text(
-  //           ' (119)',
-  //           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
